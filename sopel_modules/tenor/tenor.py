@@ -28,3 +28,7 @@ def template_endpoint(search_term, api_key):
     endpoint = endpoint_template.format(search_term, api_key)
 
     return endpoint
+
+
+def get_gifs_from_json(j):
+    return [i['media'][0]['gif']['url'] for i in j['results']]

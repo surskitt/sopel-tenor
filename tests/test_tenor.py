@@ -15,3 +15,12 @@ def test_template_endpoint():
     expected = 'https://api.tenor.com/v1/search?q=test&key=api&limit=10'
 
     assert endpoint == expected
+
+
+def test_get_gifs_from_json():
+    j = {'results': [{'media': [{'gif': {'url': 'test_url'}}]}]}
+
+    url = tenor.get_gifs_from_json(j)
+    expected = ['test_url']
+
+    assert url == expected
