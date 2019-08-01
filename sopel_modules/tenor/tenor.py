@@ -4,6 +4,8 @@ from __future__ import (unicode_literals, absolute_import,
                         division, print_function)
 
 
+import random
+
 from sopel import module
 from sopel.config.types import StaticSection, ValidatedAttribute
 
@@ -11,7 +13,7 @@ import requests
 
 
 class TenorSection(StaticSection):
-    api = ValidatedAttribute('api_key', str)
+    api_key = ValidatedAttribute('api_key', str)
 
 
 def setup(bot):
@@ -32,3 +34,20 @@ def template_endpoint(search_term, api_key):
 
 def get_gifs_from_json(j):
     return [i['media'][0]['gif']['url'] for i in j['results']]
+
+
+@module.commands('gif')
+def gif(bot, trigger):
+    search_term = trigger.group(2)
+
+    if not search_term:
+        bot.say('Usage: gif <search_term>')
+        return
+
+    api_key = bot.config.tenor.api_key
+    endpoint = template_endpoint(search_term, api_key)
+
+    r = requests.get(endpoint)
+    gifs = get_gifs_from_json(r.json())
+
+    bot.say(random.choice(gifs))
