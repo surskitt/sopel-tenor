@@ -41,13 +41,17 @@ def gif(bot, trigger):
     search_term = trigger.group(2)
 
     if not search_term:
-        bot.say('Usage: gif <search_term>')
+        bot.reply('Usage: gif <search_term>')
         return
 
     api_key = bot.config.tenor.api_key
     endpoint = template_endpoint(search_term, api_key)
 
-    r = requests.get(endpoint)
-    gifs = get_gifs_from_json(r.json())
-
-    bot.say(random.choice(gifs))
+    try:
+        r = requests.get(endpoint)
+        gifs = get_gifs_from_json(r.json())
+        bot.say(random.choice(gifs))
+    except requests.exceptions.ConnectionError:
+        bot.reply('Unable to reach api.tenor.com.')
+    except IndexError:
+        bot.reply('No results.')
